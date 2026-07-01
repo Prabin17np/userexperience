@@ -37,6 +37,7 @@ export interface IOrder extends Document {
   paymentStatus: PaymentStatus;
   orderStatus: OrderStatus;
   shippingAddress: IShippingAddress;
+  gatewayTxnId?: string;
   createdAt: Date;
   updatedAt: Date;
 }

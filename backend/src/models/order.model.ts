@@ -56,11 +56,8 @@ const orderSchema = new Schema<IOrder>(
       enum: ['COD', 'Card', 'UPI', 'NetBanking'],
       required: true,
     },
-    paymentStatus: {
-      type: String,
-      enum: ['Pending', 'Paid', 'Failed'],
-      default: 'Pending',
-    },
+  paymentStatus: { type: String, enum: ['Pending', 'Paid', 'Failed'], default: 'Pending' },
+  gatewayTxnId:  { type: String },
     orderStatus: {
       type: String,
       enum: [
