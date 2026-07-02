@@ -1,4 +1,4 @@
-// ─── CLIENT-SIDE AXIOS INSTANCE ───────────────────────────────────────────────
+
 // This file runs in the browser only.
 // It reads tokens from document.cookie (non-httpOnly client cookies).
 // Never import next/headers or cookie.server here.

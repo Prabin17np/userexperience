@@ -105,19 +105,19 @@ export const productsApi = {
   },
 
   // Admin only
-  createProduct: async (payload: FormData): Promise<BackendProduct> => {
-    const { data } = await axiosInstance.post(ENDPOINTS.PRODUCTS.BASE, payload, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    return data.data.product;
-  },
+createProduct: async (payload: FormData): Promise<BackendProduct> => {
+  const { data } = await axiosInstance.post(ENDPOINTS.PRODUCTS.BASE, payload, {
+    headers: { 'Content-Type': undefined },
+  });
+  return data.data.product;
+},
 
-  updateProduct: async (id: string, payload: FormData): Promise<BackendProduct> => {
-    const { data } = await axiosInstance.put(ENDPOINTS.PRODUCTS.BY_ID(id), payload, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    return data.data.product;
-  },
+updateProduct: async (id: string, payload: FormData): Promise<BackendProduct> => {
+  const { data } = await axiosInstance.put(ENDPOINTS.PRODUCTS.BY_ID(id), payload, {
+    headers: { 'Content-Type': undefined },
+  });
+  return data.data.product;
+},
 
   deleteProduct: async (id: string): Promise<void> => {
     await axiosInstance.delete(ENDPOINTS.PRODUCTS.BY_ID(id));
