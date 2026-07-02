@@ -6,6 +6,10 @@ export interface IProductImage {
   url: string;
   publicId: string;
 }
+export interface IProductColor {
+  name: string;
+  hex: string;
+}
 
 export interface IProduct extends Document {
   _id: Types.ObjectId;
@@ -19,6 +23,7 @@ export interface IProduct extends Document {
   badge: ProductBadge;
   isBestseller: boolean;
   sizes: string[];
+  colors: IProductColor[];
   images: IProductImage[];
   slug: string;
   createdAt: Date;
@@ -63,6 +68,7 @@ export interface CreateProductBody {
   badge?: ProductBadge;
   isBestseller?: boolean;
   sizes: string[];
+  colors?: IProductColor[];
 }
 
 export interface UpdateProductBody extends Partial<CreateProductBody> {

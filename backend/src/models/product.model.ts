@@ -9,6 +9,13 @@ const productImageSchema = new Schema(
   },
   { _id: false }
 );
+const productColorSchema = new Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    hex: { type: String, required: true, trim: true },
+  },
+  { _id: false }
+);
 
 const productSchema = new Schema<IProduct>(
   {
@@ -64,6 +71,10 @@ const productSchema = new Schema<IProduct>(
         validator: (sizes: string[]) => sizes.length > 0,
         message: 'Product must have at least one size',
       },
+       colors: {
+      type: [productColorSchema],
+      default: [],
+    },
     },
     images: {
       type: [productImageSchema],

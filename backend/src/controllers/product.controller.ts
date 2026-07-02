@@ -8,11 +8,21 @@ import AppError from '../utils/AppError';
 
 export const createProduct = asyncHandler(
   async (req: Request, res: Response) => {
+    console.log('REQ BODY:', req.body);
+   console.log('REQ FILES:', req.files);
     const files = req.files as Express.Multer.File[] | undefined;
     const images = files && files.length > 0
       ? await uploadMultipleImages(files)
       : [];
 
+       const body = { ...req.body };
+    if (typeof body.colors === 'string') {
+      try {
+        body.colors = JSON.parse(body.colors);
+      } catch {
+        body.colors = [];
+      }
+    }
     const product = await productService.createProduct(req.body, images);
     sendCreated(res, 'Product created successfully.', { product });
   }
