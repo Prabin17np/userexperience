@@ -8,6 +8,12 @@ import toast from 'react-hot-toast';
 const CATEGORIES = ['Running', 'Hiking', 'Lifestyle', 'Sport', 'Basketball', 'Training', 'Casual', 'Race'];
 const SIZES = ['6', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '12'];
 const BADGE_OPTIONS = [{ value: '', label: 'None' }, { value: 'NEW', label: 'NEW' }, { value: 'SALE', label: 'SALE' }];
+const COLORS = [
+  { name: 'White', hex: '#FFFFFF' },
+  { name: 'Black', hex: '#111111' },
+  { name: 'Blue',  hex: '#2563EB' },
+  { name: 'Red',   hex: '#DC2626' },
+];
 
 const UploadIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-40">
@@ -43,6 +49,7 @@ export default function AddItemsPage() {
   });
 
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -69,6 +76,12 @@ export default function AddItemsPage() {
   function toggleSize(size: string) {
     setSelectedSizes((prev) =>
       prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
+    );
+  }
+
+  function toggleColor(name: string) {
+    setSelectedColors((prev) =>
+      prev.includes(name) ? prev.filter((c) => c !== name) : [...prev, name]
     );
   }
 
@@ -101,6 +114,7 @@ export default function AddItemsPage() {
       formData.append('badge', form.badge);
       formData.append('isBestseller', String(form.isBestseller));
       selectedSizes.forEach((s) => formData.append('sizes', s));
+      selectedColors.forEach((c) => formData.append('colors', c));
       images.forEach((slot) => {
         if (slot.file) formData.append('images', slot.file);
       });
@@ -114,6 +128,7 @@ export default function AddItemsPage() {
         setSuccess(false);
         setForm({ name: '', brand: 'SOLE', description: '', category: 'Running', collection: '', price: '', originalPrice: '', badge: '', isBestseller: false });
         setSelectedSizes([]);
+        setSelectedColors([]);
         setImages([{ preview: null, file: null }, { preview: null, file: null }, { preview: null, file: null }, { preview: null, file: null }]);
         setErrors({});
       }, 2000);
@@ -143,7 +158,7 @@ export default function AddItemsPage() {
             {images.map((slot, idx) => (
               <div key={idx} className="relative">
                 <div
-                  className="aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer overflow-hidden transition-all duration-200 hover:border-[var(--accent)]"
+                  className="relative aspect-square rounded-xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer overflow-hidden transition-all duration-200 hover:border-[var(--accent)]"
                   style={{
                     borderColor: slot.preview ? 'var(--accent)' : 'var(--border2)',
                     background: slot.preview ? 'transparent' : 'var(--surface2)',
@@ -267,6 +282,37 @@ export default function AddItemsPage() {
             })}
           </div>
           {errors.sizes && <p className="text-xs mt-2" style={{ color: 'var(--danger)' }}>⚠ {errors.sizes}</p>}
+        </div>
+
+        {/* Colors */}
+        <div>
+          <label className={labelClass} style={{ color: 'var(--text2)' }}>
+            Product Colors <span className="font-normal normal-case tracking-normal" style={{ color: 'var(--text3)' }}>(optional)</span>
+          </label>
+          <div className="flex flex-wrap gap-2 mt-1">
+            {COLORS.map((color) => {
+              const active = selectedColors.includes(color.name);
+              return (
+                <button
+                  key={color.name}
+                  type="button"
+                  onClick={() => toggleColor(color.name)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold border-[1.5px] transition-all duration-150 active:scale-95"
+                  style={{
+                    background: active ? 'var(--accent-light)' : 'var(--surface2)',
+                    borderColor: active ? 'var(--accent)' : 'var(--border2)',
+                    color: active ? 'var(--accent)' : 'var(--text2)',
+                  }}
+                >
+                  <span
+                    className="w-4 h-4 rounded-full border"
+                    style={{ background: color.hex, borderColor: 'var(--border2)' }}
+                  />
+                  {color.name}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Bestseller */}

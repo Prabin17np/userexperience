@@ -70,17 +70,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </div>
 
-        <button
-          onClick={handleLogout}
-          className="px-5 py-2 rounded-lg text-sm font-semibold transition-all duration-200 border-[1.5px] hover:opacity-80"
-          style={{
-            background: 'var(--text)',
-            color: 'var(--bg)',
-            borderColor: 'var(--text)',
-          }}
-        >
-          Logout
-        </button>
+    <button
+  onClick={handleLogout}
+  className="
+    px-8 py-4
+    rounded-[var(--radius)]
+    border-[1.5px] border-[var(--accent)]
+    bg-[var(--accent)]
+    text-[0.8rem] font-bold uppercase tracking-[0.15em]
+    text-white
+    shadow-[0_8px_20px_-8px_var(--accent)]
+    transition-all duration-300
+    hover:-translate-y-[1px]
+    hover:brightness-90
+  "
+>
+  Logout
+</button>
       </header>
 
       <div className="flex flex-1">

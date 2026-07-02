@@ -46,7 +46,7 @@ export default function ListItemsPage() {
         </h1>
         <Link href="/admin/add"
           className="px-5 py-2.5 rounded-xl text-sm font-bold uppercase tracking-wide transition-all duration-200 hover:opacity-90"
-          style={{ background: 'var(--text)', color: 'var(--bg)' }}>
+          style={{ background: '#111111', color: '#ffffff' }}>
           + Add New
         </Link>
       </div>

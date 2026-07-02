@@ -3,6 +3,28 @@
 /* Remove system dark override */
 :root {
   --primary-color: #1EA095;
+  /* Surfaces */
+  --surface: #ffffff;
+  --surface-sunken: #f7f7f5;
+  --surface-inverse: #0a0a0a;
+
+  /* Text */
+  --text: #0a0a0a;
+  --text-muted: #6b6b68;
+  --text-inverse: #ffffff;
+  --text-inverse-muted: #a3a3a0;
+
+  /* Borders */
+  --border: #e8e8e5;
+  --border-inverse: #262624;
+
+  /* Accent (CTA / interactive) */
+  --accent: #c8460e;
+  --accent-hover: #a83a0c;
+  --accent-soft: #fbeae2;
+
+  /* Radius */
+  --radius: 12px;
 }
 
 body {
