@@ -25,8 +25,24 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="max-w-[1400px] mx-auto px-8 py-20 text-center">
-        <div className="text-6xl mb-4 opacity-40">🛍️</div>
+      <div className="max-w-[1400px] mx-auto px-8 py-24 text-center">
+        <div
+          className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full"
+          style={{ background: 'var(--text3)', opacity: 0.08 }}
+        >
+          <svg
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--text3)"
+            strokeWidth="1.5"
+            aria-hidden="true"
+          >
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+          </svg>
+        </div>
         <h1 className="text-3xl font-extrabold uppercase tracking-tight mb-2 text-[var(--text)]">
           Your Bag is Empty
         </h1>
@@ -35,7 +51,24 @@ export default function CartPage() {
         </p>
         <Link
           href="/shop"
-          className="inline-flex items-center gap-2 px-8 py-4 bg-[var(--text)] text-[var(--bg)] rounded-lg text-[0.8rem] font-bold tracking-[0.15em] uppercase no-underline transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-[var(--accent)] hover:-translate-y-px"
+          className="
+            inline-flex items-center gap-2
+            rounded-[var(--r)]
+            border-[1.5px] border-[var(--accent)]
+            bg-[var(--accent)]
+            px-8 py-4
+            text-[0.8rem] font-bold uppercase
+            tracking-[0.15em]
+            text-white
+            no-underline
+            shadow-[0_8px_20px_-8px_var(--accent)]
+            transition-all duration-300
+            ease-[cubic-bezier(0.4,0,0.2,1)]
+            hover:-translate-y-[1px]
+            hover:brightness-90
+            hover:shadow-[0_12px_24px_-8px_var(--accent)]
+            active:translate-y-0
+          "
         >
           Browse Products
         </Link>
