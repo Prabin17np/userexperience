@@ -156,7 +156,7 @@ export const ShippingForm = forwardRef<HTMLFormElement, Props>(
           <div className="flex items-center gap-3 mb-7">
             <span
               className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
-              style={{ background: 'var(--text)', color: '#4d2c2c' }}
+              style={{ background: '#ffffff', color: '#4d2c2c' }}
             >
               1
             </span>

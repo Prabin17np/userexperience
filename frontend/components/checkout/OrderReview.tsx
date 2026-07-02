@@ -12,14 +12,111 @@ interface Props {
   onBack: () => void;
 }
 
-const PAYMENT_LABELS: Record<string, string> = {
-  credit_card: 'Credit / Debit Card',
-  esewa:       'eSewa',
-  fonepay:     'FonePay',
+const PAYMENT_INFO: Record<string, { label: string; icon: string }> = {
+  credit_card: { label: 'Credit / Debit Card', icon: '💳' },
+  esewa:       { label: 'eSewa',               icon: '🟢' },
+  fonepay:     { label: 'FonePay',             icon: '📲' },
 };
 
+const Skeleton = ({ w = 'w-full', h = 'h-4', rounded = 'rounded' }: { w?: string; h?: string; rounded?: string }) => (
+  <div className={`${w} ${h} ${rounded} animate-pulse`} style={{ background: '#F0EDE8' }} />
+);
+
+function SuccessScreen({ orderId, onReset }: { orderId: string | null; onReset: () => void }) {
+  const router = useRouter();
+  const [show, setShow] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setShow(true), 80); return () => clearTimeout(t); }, []);
+
+  return (
+    <div
+      className="text-center py-16 px-6"
+      style={{
+        opacity: show ? 1 : 0,
+        transform: show ? 'translateY(0)' : 'translateY(20px)',
+        transition: 'opacity 0.5s ease, transform 0.5s ease',
+      }}
+    >
+      <div
+        className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8"
+        style={{
+          background: 'linear-gradient(135deg,#D1FAE5,#A7F3D0)',
+          boxShadow: '0 8px 32px rgba(16,185,129,0.22)',
+        }}
+      >
+        <svg width="42" height="42" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M5 13l4 4L19 7"
+            stroke="#059669"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{
+              strokeDasharray: 30,
+              strokeDashoffset: show ? 0 : 30,
+              transition: 'stroke-dashoffset 0.5s ease 0.35s',
+            }}
+          />
+        </svg>
+      </div>
+
+      <h2
+        className="font-['Playfair_Display'] text-3xl font-semibold mb-2"
+        style={{ color: '#1C1917', letterSpacing: '-0.02em' }}
+      >
+        Order Confirmed
+      </h2>
+      <p className="text-sm mb-4" style={{ color: '#78716C', lineHeight: 1.75 }}>
+        Thank you for your purchase.<br />Your order is being prepared.
+      </p>
+
+      {orderId && (
+        <div
+          className="
+inline-flex
+items-center
+rounded-full
+bg-orange-100
+text-orange-700
+px-3
+py-1.5
+text-xs
+font-semibold
+"
+        >
+          Order #{orderId.slice(-8).toUpperCase()}
+        </div>
+      )}
+
+      <p className="text-xs mb-10" style={{ color: '#C4BFB9' }}>
+        A confirmation has been sent to your email address.
+      </p>
+
+      <div className="flex flex-col sm:flex-row gap-3 justify-center">
+        <button
+          onClick={() => { onReset(); router.push('/shop'); }}
+          className="px-10 py-4 rounded-xl text-sm font-bold uppercase tracking-widest transition-all duration-200"
+          style={{ background: '#C8460E', color: '#fff', boxShadow: '0 4px 16px rgba(200,70,14,0.28)' }}
+          onMouseEnter={(e) => { (e.currentTarget.style.transform = 'translateY(-1px)'); (e.currentTarget.style.boxShadow = '0 8px 24px rgba(200,70,14,0.35)'); }}
+          onMouseLeave={(e) => { (e.currentTarget.style.transform = 'translateY(0)'); (e.currentTarget.style.boxShadow = '0 4px 16px rgba(200,70,14,0.28)'); }}
+        >
+          Continue Shopping
+        </button>
+        <button
+          onClick={() => router.push('/')}
+          className="px-10 py-4 rounded-xl text-sm font-semibold uppercase tracking-widest transition-all duration-200 border-[1.5px]"
+          style={{ borderColor: '#E7E5E4', color: '#78716C', background: 'transparent' }}
+          onMouseEnter={(e) => { (e.currentTarget.style.borderColor = '#1C1917'); (e.currentTarget.style.color = '#1C1917'); }}
+          onMouseLeave={(e) => { (e.currentTarget.style.borderColor = '#E7E5E4'); (e.currentTarget.style.color = '#78716C'); }}
+        >
+          Track Order
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function OrderReview({ onBack }: Props) {
-  const router = useRouter(); // ← moved to top, must run on every render
+  const router = useRouter();
 
   const address        = useCheckoutStore((s) => s.address);
   const shippingMethod = useCheckoutStore((s) => s.shippingMethod);
@@ -31,17 +128,16 @@ export function OrderReview({ onBack }: Props) {
   const placeOrder     = useCheckoutStore((s) => s.placeOrder);
   const resetCheckout  = useCheckoutStore((s) => s.resetCheckout);
   const getOrderTotal  = useCheckoutStore((s) => s.getOrderTotal);
+  const items          = useCartStore((s) => s.items);
 
-  const items = useCartStore((s) => s.items);
-
-  const [mounted, setMounted]             = useState(false);
-  const [placed, setPlaced]               = useState(false);
-  const [redirecting, setRedirecting]     = useState(false);
-  const [paymentError, setPaymentError]   = useState<string | null>(null);
+  const [mounted,      setMounted]      = useState(false);
+  const [placed,       setPlaced]       = useState(false);
+  const [redirecting,  setRedirecting]  = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [btnHover,     setBtnHover]     = useState(false);
 
   useEffect(() => setMounted(true), []);
 
-  // Only compute totals after mount to avoid SSR mismatch
   const { subtotal, shipping, tax, total } = mounted
     ? getOrderTotal()
     : { subtotal: 0, shipping: 0, tax: 0, total: 0 };
@@ -50,243 +146,252 @@ export function OrderReview({ onBack }: Props) {
     setPaymentError(null);
     try {
       await placeOrder();
-
-      // If eSewa was selected, redirect to the gateway instead of showing success
       if (paymentDetails.method === 'esewa') {
         const newOrderId = useCheckoutStore.getState().orderId;
-        if (!newOrderId) throw new Error('Order ID missing — cannot start eSewa payment.');
-
+        if (!newOrderId) throw new Error('Order ID missing.');
         setRedirecting(true);
         const { paymentUrl, formData } = await paymentApi.initiateEsewa(newOrderId);
         redirectToEsewa(paymentUrl, formData);
-        return; // browser is navigating away — don't setPlaced
+        return;
       }
-
       setPlaced(true);
     } catch (err) {
       setRedirecting(false);
-      const message = err instanceof Error ? err.message : 'Something went wrong';
-      setPaymentError(message);
+      setPaymentError(err instanceof Error ? err.message : 'Something went wrong');
     }
   }
 
-  //Success screen
-  if (orderComplete || placed) {
-    return (
-      <div className="text-center py-16 px-4">
-        <div
-          className="w-20 h-20 rounded-full flex items-center justify-center text-3xl mx-auto mb-6"
-          style={{ background: '#D1FAE5', color: '#065F46' }}
-        >
-          ✓
-        </div>
-        <h2
-          className="font-['Playfair_Display'] text-3xl font-semibold mb-3"
-          style={{ color: 'var(--text)' }}
-        >
-          Order Confirmed!
-        </h2>
-        <p className="text-sm mb-1" style={{ color: 'var(--text2)' }}>
-          Thank you for your purchase. We&apos;ll get it ready soon.
-        </p>
-        {orderId && (
-          <p className="text-sm font-semibold mt-2 mb-8" style={{ color: 'var(--accent)' }}>
-            Order ID: #{orderId}
-          </p>
-        )}
-        <button
-          onClick={() => { resetCheckout(); router.push('/shop'); }}
-          className="px-10 py-4 rounded-lg text-sm font-semibold uppercase tracking-wide transition-all duration-200 hover:opacity-90"
-          style={{ background: 'var(--text)', color: 'var(--bg)' }}
-        >
-          Continue Shopping
-        </button>
-      </div>
-    );
-  }
+  if (orderComplete || placed) return <SuccessScreen orderId={orderId} onReset={resetCheckout} />;
 
-  //Redirecting to eSewa screen
   if (redirecting) {
     return (
-      <div className="text-center py-16 px-4">
-        <div className="text-4xl mb-5 animate-pulse">💳</div>
-        <h2 className="font-['Playfair_Display'] text-2xl font-semibold mb-2" style={{ color: 'var(--text)' }}>
-          Redirecting to eSewa…
+      <div className="text-center py-20">
+        <div className="text-5xl mb-6 animate-pulse">💳</div>
+        <h2 className="font-['Playfair_Display'] text-2xl font-semibold mb-3" style={{ color: '#1C1917' }}>
+          Redirecting to eSewa
         </h2>
-        <p className="text-sm" style={{ color: 'var(--text2)' }}>
-          Please wait, you&apos;ll be redirected to complete your payment.
+        <p className="text-sm" style={{ color: '#78716C' }}>
+          Please wait while we take you to the payment gateway…
         </p>
+        <div className="flex justify-center mt-6 gap-1.5">
+          {[0,1,2].map((i) => (
+            <div key={i} className="w-2 h-2 rounded-full" style={{ background: '#C8460E', animation: `pulse 1.2s ease-in-out ${i*0.2}s infinite` }} />
+          ))}
+        </div>
       </div>
     );
   }
 
-  // Totals skeleton while not mounted
-  const TotalRow = ({ label, value, large }: { label: string; value: string; large?: boolean }) => (
-    <div
-      className={`flex justify-between ${large ? 'items-baseline text-base font-bold pt-3 mt-1' : ''}`}
-      style={{
-        color: large ? 'var(--text)' : 'var(--text2)',
-        ...(large ? { borderTop: '1px solid var(--border2)' } : {}),
-      }}
-    >
-      <span>{label}</span>
-      {mounted ? (
-        <span>${value}</span>
-      ) : (
-        <span className="w-16 h-4 rounded animate-pulse bg-gray-200 inline-block" />
-      )}
-    </div>
-  );
+  const payInfo = PAYMENT_INFO[paymentDetails.method] ?? PAYMENT_INFO.credit_card;
+
+ const card =
+  "rounded-2xl border p-6 mb-4 bg-[var(--surface-sunken)] border-[var(--border)]";
+
+const sectionLabel =
+  "block mb-4 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--text-muted)]";
 
   return (
-    <div>
-      <h2
-        className="font-['Playfair_Display'] text-2xl font-semibold mb-6"
-        style={{ color: 'var(--text)' }}
-      >
-        Review Your Order
-      </h2>
+    <div style={{ fontFamily: 'Inter, Geist, system-ui, sans-serif' }}>
 
-      {/* Error — from order creation */}
-      {error && (
-        <div
-          className="mb-5 px-4 py-3 rounded-xl text-sm flex items-center gap-2"
-          style={{ background: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA' }}
+      {/* Header */}
+      <div className="mb-7">
+        <h2
+        className="
+font-['Playfair_Display']
+text-3xl
+font-semibold
+tracking-tight
+text-[var(--text)]
+"
         >
-          ⚠ {error}
+          Review Your Order
+        </h2>
+        <p className="text-sm" style={{ color: '#A8A29E' }}>
+          Please review the details below before completing your purchase.
+        </p>
+      </div>
+
+      {/* Error */}
+      {(error || paymentError) && (
+        <div
+          className="flex items-start gap-3 mb-5 p-4 rounded-xl"
+          style={{ background: '#FFF5F5', border: '1px solid #FED7D7', borderLeft: '4px solid #E53E3E' }}
+        >
+          <span className="text-base flex-shrink-0">⚠️</span>
+          <div>
+            <p className="text-sm font-semibold mb-0.5" style={{ color: '#C53030' }}>Something went wrong</p>
+            <p className="text-xs" style={{ color: '#E53E3E' }}>{error || paymentError}</p>
+          </div>
         </div>
       )}
 
-      {/* Error — from eSewa initiation */}
-      {paymentError && (
-        <div
-          className="mb-5 px-4 py-3 rounded-xl text-sm flex items-center gap-2"
-          style={{ background: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA' }}
-        >
-          ⚠ {paymentError}
-        </div>
-      )}
+      {/* Card 1 — Items */}
+      <div className={card}>
+        <span className={sectionLabel}>
+          Order Items {mounted && `· ${items.length} ${items.length === 1 ? 'item' : 'items'}`}
+        </span>
 
-      {/* Items */}
-      <div className="rounded-2xl border-[1.5px] p-5 mb-5" style={{ borderColor: 'var(--border)' }}>
-        <h3 className="text-xs font-semibold uppercase tracking-wide mb-4" style={{ color: 'var(--text2)' }}>
-          Items ({mounted ? items.length : '—'})
-        </h3>
-        {mounted ? (
-          <div className="flex flex-col gap-4">
-            {items.map((item) => (
-              <div key={item.id} className="flex gap-3 items-center">
-                <div
-                  className="relative w-14 h-14 rounded-lg overflow-hidden flex-shrink-0"
-                  style={{ background: 'var(--surface2)' }}
-                >
-                  <Image
-                    src={item.product.images[0]}
-                    alt={item.product.name}
-                    fill
-                    sizes="56px"
-                    className="object-cover"
-                  />
+        {!mounted ? (
+          <div className="flex flex-col gap-5">
+            {[1,2].map((i) => (
+              <div key={i} className="flex gap-4 items-center">
+                <Skeleton w="w-[72px]" h="h-[72px]" rounded="rounded-xl" />
+                <div className="flex-1 flex flex-col gap-2">
+                  <Skeleton w="w-3/4" h="h-3" />
+                  <Skeleton w="w-1/2" h="h-3" />
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate" style={{ color: 'var(--text)' }}>
-                    {item.product.name}
-                  </p>
-                  <p className="text-xs mt-0.5" style={{ color: 'var(--text3)' }}>
-                    Size {item.selectedSize} · {item.selectedColor} · Qty {item.quantity}
-                  </p>
-                </div>
-                <p className="text-sm font-semibold flex-shrink-0" style={{ color: 'var(--text)' }}>
-                  ${(item.product.price * item.quantity).toFixed(2)}
-                </p>
+                <Skeleton w="w-14" h="h-4" />
               </div>
             ))}
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
-            {[1, 2].map((i) => (
-              <div key={i} className="flex gap-3 animate-pulse">
-                <div className="w-14 h-14 rounded-lg bg-gray-200 flex-shrink-0" />
-                <div className="flex-1 flex flex-col gap-2 pt-1">
-                  <div className="h-3 rounded w-3/4 bg-gray-200" />
-                  <div className="h-3 rounded w-1/2 bg-gray-200" />
+          items.map((item, idx) => (
+            <div key={item.id}>
+              <div className="flex gap-4 items-center py-4">
+                <div
+                  className="
+relative
+w-[72px]
+h-[72px]
+rounded-xl
+overflow-hidden
+bg-[var(--surface)]
+"
+                >
+                  <Image src={item.product.images[0]} alt={item.product.name} fill sizes="72px" className="object-cover" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold truncate mb-1" style={{ color: '#1C1917' }}>
+                    {item.product.name}
+                  </p>
+                  <p className="text-sm text-[var(--text-muted)]">
+                    Size {item.selectedSize} · {item.selectedColor} · Qty {item.quantity}
+                  </p>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <p className="text-sm font-semibold text-[var(--text)]">
+                    ${(item.product.price * item.quantity).toFixed(2)}
+                  </p>
+                  {item.quantity > 1 && (
+                    <p className="text-xs" style={{ color: '#C4BFB9' }}>${item.product.price.toFixed(2)} each</p>
+                  )}
                 </div>
               </div>
-            ))}
-          </div>
+              {idx < items.length - 1 && <div style={{ height: 1, background: '#F0EDE8' }} />}
+            </div>
+          ))
         )}
       </div>
 
-      {/* Delivery info */}
-      <div className="rounded-2xl border-[1.5px] p-5 mb-5" style={{ borderColor: 'var(--border)' }}>
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--text2)' }}>
-            Delivery Details
-          </h3>
+      {/* Card 2 — Shipping */}
+      <div className={card}>
+        <div className="flex items-start justify-between">
+          <span className={sectionLabel}>Shipping Information</span>
           <button
             onClick={onBack}
-            className="text-xs font-semibold transition-opacity hover:opacity-70"
-            style={{ color: 'var(--accent)' }}
+            className="text-xs font-semibold transition-opacity duration-150 hover:opacity-60 -mt-1"
+            style={{ color: '#C8460E' }}
           >
             Edit
           </button>
         </div>
-        <div className="flex flex-col gap-1 text-sm">
-          <p className="font-semibold" style={{ color: 'var(--text)' }}>{address.fullName}</p>
-          <p style={{ color: 'var(--text2)' }}>{address.address}</p>
-          <p style={{ color: 'var(--text2)' }}>{address.city}</p>
-          <p style={{ color: 'var(--text2)' }}>{address.phone}</p>
-          <p style={{ color: 'var(--text2)' }}>{address.email}</p>
+
+        <p className="text-sm font-semibold mb-3" style={{ color: '#1C1917' }}>{address.fullName || '—'}</p>
+
+        <div className="flex flex-col gap-2.5">
+          {[
+            { icon: '📍', value: address.address },
+            { icon: '🏙️', value: address.city },
+            { icon: '📞', value: address.phone },
+            { icon: '✉️', value: address.email },
+          ].filter(r => r.value).map(({ icon, value }) => (
+            <div key={icon} className="flex items-center gap-2.5">
+              <span className="text-sm flex-shrink-0" style={{ opacity: 0.45 }}>{icon}</span>
+              <span className="text-sm" style={{ color: '#78716C' }}>{value}</span>
+            </div>
+          ))}
         </div>
-        <p
-          className="text-sm font-medium mt-3 pt-3"
-          style={{ color: 'var(--text)', borderTop: '1px solid var(--border)' }}
-        >
-          {shippingMethod === 'express'
-            ? '🚀 Express Shipping (1–2 days)'
-            : '📦 Standard Shipping (3–5 days)'}
-        </p>
+
+        <div className="mt-4 pt-4" style={{ borderTop: '1px solid #F0EDE8' }}>
+          <span
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold"
+            style={
+              shippingMethod === 'express'
+                ? { background: '#FEF3C7', color: '#92400E' }
+                : { background: '#F0FDF4', color: '#166534' }
+            }
+          >
+            {shippingMethod === 'express' ? '🚀 Express Shipping · 1–2 Days' : '📦 Standard Shipping · 3–5 Days'}
+          </span>
+        </div>
       </div>
 
-      {/* Payment */}
-      <div className="rounded-2xl border-[1.5px] p-5 mb-5" style={{ borderColor: 'var(--border)' }}>
-        <h3 className="text-xs font-semibold uppercase tracking-wide mb-3" style={{ color: 'var(--text2)' }}>
-          Payment Method
-        </h3>
-        <p className="text-sm" style={{ color: 'var(--text)' }}>
-          {PAYMENT_LABELS[paymentDetails.method] ?? paymentDetails.method}
-          {paymentDetails.method === 'credit_card' && paymentDetails.creditCard?.cardNumber && (
-            <span style={{ color: 'var(--text3)' }}>
-              {' '}•••• {paymentDetails.creditCard.cardNumber.replace(/\s/g, '').slice(-4)}
-            </span>
-          )}
-        </p>
+      {/* Card 3 — Payment */}
+     <div className={card}>
+        <span className={sectionLabel}>Payment Method</span>
+        {!mounted ? (
+          <div className="flex items-center gap-3">
+            <Skeleton w="w-10" h="h-10" rounded="rounded-xl" />
+            <div className="flex flex-col gap-2"><Skeleton w="w-32" h="h-3" /><Skeleton w="w-20" h="h-3" /></div>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg flex-shrink-0" style={{ background: '#F5F5F4' }}>
+              {payInfo.icon}
+            </div>
+            <div>
+              <p className="text-sm font-semibold" style={{ color: '#1C1917' }}>{payInfo.label}</p>
+              {paymentDetails.method === 'credit_card' && paymentDetails.creditCard?.cardNumber && (
+                <p className="text-xs text-[var(--text-muted)]">
+                  Visa •••• {paymentDetails.creditCard.cardNumber.replace(/\s/g, '').slice(-4)}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Order total */}
-      <div
-        className="rounded-2xl p-5 mb-8"
-        style={{ background: 'var(--surface2)', border: '1px solid var(--border)' }}
-      >
-        <h3 className="text-xs font-semibold uppercase tracking-wide mb-4" style={{ color: 'var(--text2)' }}>
-          Order Total
-        </h3>
-        <div className="flex flex-col gap-2 text-sm">
-          <TotalRow label="Subtotal"                        value={subtotal.toFixed(2)} />
-          <TotalRow label={`Shipping (${shippingMethod})`}  value={shipping.toFixed(2)} />
-          <TotalRow label="Tax (8%)"                         value={tax.toFixed(2)} />
-          <TotalRow label="Total"                            value={total.toFixed(2)} large />
+      {/* Card 4 — Order Total (dark) */}
+      <div className={card} style={{ background: '#2A2623', border: '1px solid rgba(255,255,255,0.06)', marginBottom: 0 }}>
+        <span className={sectionLabel} style={{ color: '#57534E' }}>Order Summary</span>
+
+        <div className="flex flex-col gap-3">
+          {[
+            { l: 'Subtotal', v: subtotal },
+            { l: `Shipping (${shippingMethod === 'express' ? 'Express' : 'Standard'})`, v: shipping },
+            { l: 'Tax (8%)', v: tax },
+          ].map(({ l, v }) => (
+            <div key={l} className="flex justify-between items-center">
+              <span className="text-sm" style={{ color: '#78716C' }}>{l}</span>
+              {mounted
+                ? <span className="text-sm font-medium" style={{ color: '#D4CFCA' }}>${v.toFixed(2)}</span>
+                : <Skeleton w="w-14" h="h-3" />
+              }
+            </div>
+          ))}
+
+          <div style={{ height: 1, background: '#292524', margin: '0.25rem 0' }} />
+
+          <div className="flex justify-between items-center">
+            <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#57534E' }}>Total</span>
+            {mounted
+              ? <span className="font-['Playfair_Display'] font-semibold" style={{ color: '#C8460E', fontSize: '1.6rem', letterSpacing: '-0.01em' }}>${total.toFixed(2)}</span>
+              : <Skeleton w="w-24" h="h-7" rounded="rounded-md" />
+            }
+          </div>
         </div>
       </div>
 
       {/* Actions */}
-      <div className="flex gap-3">
+      <div className="flex gap-3 mt-5">
         <button
           type="button"
           onClick={onBack}
           disabled={isProcessing}
-          className="px-8 py-4 rounded-lg text-sm font-semibold uppercase tracking-wide border-[1.5px] transition-all duration-200 hover:opacity-80 disabled:opacity-50"
-          style={{ borderColor: 'var(--border2)', color: 'var(--text)' }}
+          className="px-7 py-4 rounded-xl text-sm font-semibold transition-all duration-200 border-[1.5px] disabled:opacity-40"
+          style={{ borderColor: '#E7E5E4', color: '#78716C', background: 'transparent' }}
+          onMouseEnter={(e) => { (e.currentTarget.style.borderColor = '#1C1917'); (e.currentTarget.style.color = '#1C1917'); }}
+          onMouseLeave={(e) => { (e.currentTarget.style.borderColor = '#E7E5E4'); (e.currentTarget.style.color = '#78716C'); }}
         >
           ← Back
         </button>
@@ -295,19 +400,39 @@ export function OrderReview({ onBack }: Props) {
           type="button"
           onClick={handlePlaceOrder}
           disabled={isProcessing || !mounted || items.length === 0}
-          className="flex-1 px-10 py-4 rounded-lg text-sm font-semibold uppercase tracking-wide transition-all duration-200 hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
-          style={{ background: 'var(--text)', color: 'var(--bg)' }}
+          onMouseEnter={() => setBtnHover(true)}
+          onMouseLeave={() => setBtnHover(false)}
+          className="flex-1 py-4 rounded-xl text-sm font-bold uppercase tracking-widest transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2.5"
+          style={{
+            background: '#C8460E',
+            color: '#fff',
+            boxShadow: btnHover && !isProcessing ? '0 8px 28px rgba(200,70,14,0.38)' : '0 4px 14px rgba(200,70,14,0.22)',
+            transform: btnHover && !isProcessing ? 'translateY(-1px)' : 'translateY(0)',
+          }}
         >
           {isProcessing ? (
-            <><span className="inline-block animate-spin">⟳</span> Placing Order…</>
+            <>
+              <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+              </svg>
+              Processing…
+            </>
           ) : (
-            'Place Order 🔒'
+            <>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
+              </svg>
+              Complete Purchase
+            </>
           )}
         </button>
       </div>
 
-      <p className="text-center text-xs mt-5" style={{ color: 'var(--text3)' }}>
-        By placing your order, you agree to our Terms of Service and Privacy Policy.
+      <p className="text-center text-xs mt-5" style={{ color: '#C4BFB9' }}>
+        By completing your purchase you agree to our{' '}
+        <span style={{ color: '#A8A29E', textDecoration: 'underline', cursor: 'pointer' }}>Terms</span>
+        {' & '}
+        <span style={{ color: '#A8A29E', textDecoration: 'underline', cursor: 'pointer' }}>Privacy Policy</span>.
       </p>
     </div>
   );

@@ -24,8 +24,8 @@ export function CartItem({ item }: Props) {
   const removeItem    = useCartStore((s) => s.removeItem);
 
   return (
-    <div className="flex gap-6 px-8 py-8 border-b border-gray-200 bg-[#f7f7f7] hover:bg-[#f2f2f2] transition-colors duration-200 last:border-b-0">
-      <div className="relative w-[120px] h-[150px] flex-shrink-0 rounded-xl overflow-hidden bg-gray-100">
+    <div className="flex gap-6 px-8 py-8 border-b border-gray-100 hover:bg-gray-50 transition-colors duration-200 last:border-b-0">
+      <div className="relative w-[120px] h-[150px] flex-shrink-0 rounded-xl overflow-hidden bg-[var(--surface)]">
         <Image
           src={product.images[0]}   // ← already a string 
           alt={product.name}

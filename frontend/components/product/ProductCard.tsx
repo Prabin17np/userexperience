@@ -157,7 +157,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = t
             <button
               onClick={handleQuickAdd}
               className="
-                w-9 h-9 rounded-full bg-[var(--text)] text-[var(--bg)]
+                w-9 h-9 rounded-full bg-[var(--text)] text-[var(--text-inverse)]
                 flex items-center justify-center transition
                 hover:bg-[var(--accent)] hover:scale-110
               "
