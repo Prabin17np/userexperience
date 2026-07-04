@@ -135,12 +135,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = t
 
           <div>
             <span className="text-[1.1rem] font-semibold text-[var(--text)]">
-              ${product.price}
+              Rs. {product.price.toLocaleString()}
             </span>
 
             {product.originalPrice && (
               <span className="text-[0.85rem] text-[var(--text3)] line-through ml-2">
-                ${product.originalPrice}
+               Rs. {product.originalPrice.toLocaleString()}
               </span>
             )}
           </div>

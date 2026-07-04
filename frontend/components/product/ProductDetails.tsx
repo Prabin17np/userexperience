@@ -44,12 +44,12 @@ export const ProductDetails: React.FC<Props> = ({ product }) => {
       {/* PRICE */}
       <div className="flex items-center gap-3">
         <span className="text-3xl font-semibold text-[var(--text)]">
-          ${product.price}
+          Rs. {product.price.toLocaleString()}
         </span>
 
         {product.originalPrice && (
           <span className="text-lg line-through text-[var(--text3)]">
-            ${product.originalPrice}
+            Rs. {product.originalPrice.toLocaleString()}
           </span>
         )}
 
