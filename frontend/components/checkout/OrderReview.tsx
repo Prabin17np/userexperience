@@ -268,14 +268,17 @@ bg-[var(--surface)]
                     Size {item.selectedSize} · {item.selectedColor} · Qty {item.quantity}
                   </p>
                 </div>
-                <div className="text-right flex-shrink-0">
-                  <p className="text-sm font-semibold text-[var(--text)]">
-                    ${(item.product.price * item.quantity).toFixed(2)}
-                  </p>
-                  {item.quantity > 1 && (
-                    <p className="text-xs" style={{ color: '#C4BFB9' }}>${item.product.price.toFixed(2)} each</p>
-                  )}
-                </div>
+              <div className="text-right flex-shrink-0">
+  <p className="text-sm font-semibold text-[var(--text)]">
+    Rs. {(item.product.price * item.quantity).toLocaleString()}
+  </p>
+
+  {item.quantity > 1 && (
+    <p className="text-xs" style={{ color: '#C4BFB9' }}>
+      Rs. {item.product.price.toLocaleString()} each
+    </p>
+  )}
+</div>
               </div>
               {idx < items.length - 1 && <div style={{ height: 1, background: '#F0EDE8' }} />}
             </div>
@@ -364,7 +367,7 @@ bg-[var(--surface)]
             <div key={l} className="flex justify-between items-center">
               <span className="text-sm" style={{ color: '#78716C' }}>{l}</span>
               {mounted
-                ? <span className="text-sm font-medium" style={{ color: '#D4CFCA' }}>${v.toFixed(2)}</span>
+                ? <span className="text-sm font-medium" style={{ color: '#D4CFCA' }}>Rs. {v.toLocaleString()}</span>
                 : <Skeleton w="w-14" h="h-3" />
               }
             </div>
@@ -375,7 +378,7 @@ bg-[var(--surface)]
           <div className="flex justify-between items-center">
             <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#57534E' }}>Total</span>
             {mounted
-              ? <span className="font-['Playfair_Display'] font-semibold" style={{ color: '#C8460E', fontSize: '1.6rem', letterSpacing: '-0.01em' }}>${total.toFixed(2)}</span>
+              ? <span className="font-['Playfair_Display'] font-semibold" style={{ color: '#C8460E', fontSize: '1.6rem', letterSpacing: '-0.01em' }}>Rs. {total.toLocaleString()}</span>
               : <Skeleton w="w-24" h="h-7" rounded="rounded-md" />
             }
           </div>

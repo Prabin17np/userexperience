@@ -252,7 +252,7 @@ export const ShippingForm = forwardRef<HTMLFormElement, Props>(
   className="text-sm font-bold flex-shrink-0"
   style={{ color: selected ? '#fff' : 'var(--text)' }}
 >
-  {opt.price === 0 ? 'Free' : `+$${opt.price.toFixed(2)}`}
+  {opt.price === 0 ? 'Free' : `+RS ${opt.price.toLocaleString()}`}
 </span>
                 </button>
               );

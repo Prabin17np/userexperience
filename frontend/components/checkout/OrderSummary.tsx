@@ -98,7 +98,7 @@ export function OrderSummary({
               </p>
             </div>
             <p className="text-sm font-bold flex-shrink-0 self-center" style={{ color: 'var(--text)' }}>
-              ${(item.product.price * item.quantity).toFixed(2)}
+            Rs. {(item.product.price * item.quantity).toLocaleString()}
             </p>
           </div>
         ))}
@@ -108,7 +108,7 @@ export function OrderSummary({
       <div className="flex flex-col">
         <div className="flex justify-between items-center text-[0.92rem] text-[var(--text2)] py-[0.9rem] border-b border-gray-200">
           <span>Subtotal</span>
-          <strong style={{ color: 'var(--text)' }}>${subtotal.toFixed(2)}</strong>
+          <strong style={{ color: 'var(--text)' }}>Rs. {subtotal.toLocaleString()}</strong>
         </div>
 
         <div className="flex justify-between items-center text-[0.92rem] py-[0.9rem] border-b border-gray-200">
@@ -118,12 +118,12 @@ export function OrderSummary({
               {shippingMethod === 'express' ? 'Express' : 'Standard'}
             </span>
           </span>
-          <strong style={{ color: 'var(--text)' }}>${shipping.toFixed(2)}</strong>
+          <strong style={{ color: 'var(--text)' }}>Rs. {shipping.toLocaleString()}</strong>
         </div>
 
         <div className="flex justify-between items-center text-[0.92rem] text-[var(--text2)] py-[0.9rem] border-b border-gray-200">
           <span>Tax (8%)</span>
-          <strong style={{ color: 'var(--text)' }}>${tax.toFixed(2)}</strong>
+          <strong style={{ color: 'var(--text)' }}>Rs. {tax.toLocaleString()}</strong>
         </div>
       </div>
 
@@ -131,7 +131,7 @@ export function OrderSummary({
       <div className="border-t-2 border-gray-300 my-4" />
       <div className="flex justify-between items-baseline text-[1.3rem] font-extrabold py-2 pb-6" style={{ color: 'var(--text)' }}>
         <span>Total</span>
-        <span>${total.toFixed(2)}</span>
+        <span>Rs. {total.toLocaleString()}</span>
       </div>
 
       {/* CTA */}
