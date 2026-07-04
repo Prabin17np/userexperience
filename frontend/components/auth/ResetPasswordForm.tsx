@@ -38,7 +38,7 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
     /[^A-Za-z0-9]/.test(password),
     password.length > 6,
   ].filter(Boolean).length;
-  const strengthColors = ["bg-red-400", "bg-orange-400", "bg-yellow-400", "bg-green-500"];
+  const strengthColors = ["bg-[#C0392B]", "bg-[#C2410C]", "bg-[#B7950B]", "bg-[#111111]"];
   const strengthLabels = ["Weak", "Fair", "Good", "Strong"];
 
   const onSubmit = async (data: ResetPasswordData) => {
@@ -60,57 +60,63 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
   };
 
   return (
-    <div className="bg-white/90 backdrop-blur-md shadow-xl rounded-3xl p-8 border border-green-100 w-full max-w-md mx-auto">
-
-      {/* Logo + Heading */}
-      <div className="flex flex-col items-center mb-8 gap-2">
-        <Image src="/assets/icons/logo.png" height={80} width={80}unoptimized alt="logo" />
-        <h1 className="text-3xl font-serif font-bold text-[#2F7330]">Reset Password</h1>
-        <p className="text-gray-500 text-sm">Choose a strong new password 🔒</p>
+    <div className="bg-white w-full max-w-md mx-auto px-10 py-12 sm:px-12 sm:py-16">
+      {/* Wordmark */}
+      <div className="mb-10">
+        <p className="text-lg font-black tracking-[0.15em] text-[#C84B11] uppercase mb-8">
+          Solely
+        </p>
+        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#111111] mb-2 leading-tight">
+          Reset Password
+        </h1>
+        <p className="text-sm text-[#8A8A8A]">
+          Choose a strong new password
+        </p>
       </div>
 
-      {/* Error */}
       {error && (
-        <p className="text-red-500 text-sm text-center mb-4 bg-red-50 rounded-xl py-2 px-3">
+        <p className="text-sm text-[#C0392B] mb-5 bg-[#FDECEA] py-2.5 px-3.5 rounded-md">
           {error}
         </p>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* New Password */}
-        <div className="flex flex-col gap-1">
-          <div className="relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="New Password"
-              {...register("newPassword")}
-              className="w-full bg-transparent border-b-2 border-green-300 focus:outline-none focus:border-[#1F5E24] transition-all duration-300 py-2 pr-14"
-            />
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-bold uppercase tracking-wide text-[#555555]">
+              New Password
+            </label>
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-0 top-2 text-sm text-[#1F5E24] font-medium"
+              className="text-xs font-semibold uppercase tracking-wide text-[#999999] hover:text-[#111111] transition-colors"
             >
               {showPassword ? "Hide" : "Show"}
             </button>
           </div>
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="••••••••"
+            {...register("newPassword")}
+            className="w-full bg-[#F5F5F5] rounded-md px-4 py-3.5 text-sm text-[#111111] placeholder:text-[#999999] outline-none focus:ring-2 focus:ring-[#C84B11]/40 transition-all"
+          />
           {errors.newPassword && (
-            <span className="text-red-500 text-xs">{errors.newPassword.message}</span>
+            <span className="text-xs text-[#C0392B]">{errors.newPassword.message}</span>
           )}
 
           {/* Strength bar */}
           {password.length > 0 && (
-            <div className="mt-1 space-y-1">
-              <div className="h-1.5 rounded-full overflow-hidden bg-slate-200">
+            <div className="mt-1.5 space-y-1.5">
+              <div className="h-1 bg-[#eee] rounded-full overflow-hidden">
                 <div
-                  className={`${strengthColors[strength - 1] || "bg-red-400"} h-1.5 transition-all duration-300`}
+                  className={`${strengthColors[strength - 1] || "bg-[#C0392B]"} h-1 rounded-full transition-all duration-300`}
                   style={{ width: `${(strength / 4) * 100}%` }}
                 />
               </div>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-[#8A8A8A]">
                 Strength:{" "}
-                <span className="font-medium text-gray-600">
+                <span className="font-semibold text-[#111111]">
                   {strengthLabels[strength - 1] || "Too weak"}
                 </span>
               </p>
@@ -119,15 +125,18 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         </div>
 
         {/* Confirm Password */}
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-2">
+          <label className="text-xs font-bold uppercase tracking-wide text-[#555555]">
+            Confirm New Password
+          </label>
           <input
             type="password"
-            placeholder="Confirm New Password"
+            placeholder="••••••••"
             {...register("confirmNewPassword")}
-            className="w-full bg-transparent border-b-2 border-green-300 focus:outline-none focus:border-[#1F5E24] transition-all duration-300 py-2"
+            className="w-full bg-[#F5F5F5] rounded-md px-4 py-3.5 text-sm text-[#111111] placeholder:text-[#999999] outline-none focus:ring-2 focus:ring-[#C84B11]/40 transition-all"
           />
           {errors.confirmNewPassword && (
-            <span className="text-red-500 text-xs">{errors.confirmNewPassword.message}</span>
+            <span className="text-xs text-[#C0392B]">{errors.confirmNewPassword.message}</span>
           )}
         </div>
 
@@ -135,25 +144,25 @@ export default function ResetPasswordForm({ token }: ResetPasswordFormProps) {
         <button
           type="submit"
           disabled={isSubmitting || pending}
-          className="w-full bg-[#1F5E24] text-white py-3 rounded-full hover:bg-[#17491c] transition-all duration-300 shadow-md hover:shadow-lg font-semibold disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full bg-[#111111] text-white py-4 rounded-md text-sm font-bold uppercase tracking-[0.1em] hover:bg-[#222222] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting || pending ? "Resetting..." : "Reset Password"}
         </button>
-
       </form>
 
       {/* Back to login */}
-      <p className="text-center text-sm text-gray-600 mt-6">
-        Remember your password?{" "}
-        <button
-          type="button"
-          onClick={() => router.push("/login")}
-          className="text-[#1F5E24] font-semibold hover:underline"
-        >
-          Back to Login
-        </button>
-      </p>
-
+      <div className="mt-10 text-center">
+        <p className="text-sm text-[#8A8A8A]">
+          Remember your password?{" "}
+          <button
+            type="button"
+            onClick={() => router.push("/login")}
+            className="text-[#111111] font-bold underline ml-1"
+          >
+            Back to Login
+          </button>
+        </p>
+      </div>
     </div>
   );
 }

@@ -54,12 +54,6 @@ export default function MockEsewaPage() {
     <div className="min-h-screen flex items-center justify-center bg-[#f3f4f6] px-4">
       <div className="w-full max-w-sm bg-white rounded-2xl shadow-lg p-8">
 
-        {/* Mock banner */}
-        <div className="mb-6 px-3 py-2 rounded-lg text-xs font-semibold text-center"
-          style={{ background: '#FEF3C7', color: '#92400E' }}>
-          ⚠ DEMO MODE — Simulated eSewa Gateway
-        </div>
-
         <div className="flex flex-col items-center mb-6">
           <div className="w-14 h-14 rounded-full flex items-center justify-center text-2xl mb-3"
             style={{ background: '#60BB46' }}>

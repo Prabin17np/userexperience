@@ -41,58 +41,81 @@ export default function ForgotPasswordForm({ onOpenLogin }: ForgotPasswordFormPr
   };
 
   return (
-    <div className="bg-white/90 backdrop-blur-md shadow-xl rounded-3xl p-8 border border-green-100 w-full max-w-md mx-auto">
-      <div className="flex flex-col items-center mb-8 gap-2">
-        <Image src="/assets/icons/logo.png" height={80} width={80}unoptimized alt="logo" />
-        <h1 className="text-3xl font-serif font-bold text-[#2F7330]">Forgot Password</h1>
-        <p className="text-gray-500 text-sm text-center">
-          Enter your email and we&apos;ll send you a reset link 📧
+    <div className="bg-white w-full max-w-md mx-auto px-10 py-12 sm:px-12 sm:py-16">
+      {/* Wordmark */}
+      <div className="mb-10">
+        <p className="text-lg font-black tracking-[0.15em] text-[#C84B11] uppercase mb-8">
+          Solely
+        </p>
+        <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-[#111111] mb-2 leading-tight">
+          Forgot Password
+        </h1>
+        <p className="text-sm text-[#8A8A8A]">
+          Enter your email and we&apos;ll send you a reset link
         </p>
       </div>
 
       {sent ? (
-        <div className="text-center space-y-4">
-          <div className="bg-green-50 border border-green-200 rounded-2xl py-6 px-4">
-            <p className="text-3xl mb-2">📬</p>
-            <p className="text-[#1F5E24] font-semibold">Reset link sent!</p>
-            <p className="text-gray-500 text-sm mt-1">Check your inbox and follow the instructions.</p>
+        <div className="text-center space-y-5">
+          <div className="bg-[#F5F5F5] rounded-md py-8 px-6">
+            <p className="text-[#111111] font-bold uppercase text-sm tracking-wide">Reset link sent!</p>
+            <p className="text-[#8A8A8A] text-sm mt-2">Check your inbox and follow the instructions.</p>
           </div>
-          {/* Use prop instead of router.push */}
-          <button type="button" onClick={onOpenLogin}
-            className="w-full bg-[#1F5E24] text-white py-3 rounded-full hover:bg-[#17491c] transition-all duration-300 shadow-md font-semibold">
+          <button
+            type="button"
+            onClick={onOpenLogin}
+            className="w-full bg-[#111111] text-white py-4 rounded-md text-sm font-bold uppercase tracking-[0.1em] hover:bg-[#222222] transition-colors"
+          >
             Back to Login
           </button>
         </div>
       ) : (
         <>
           {error && (
-            <p className="text-red-500 text-sm text-center mb-4 bg-red-50 rounded-xl py-2 px-3">{error}</p>
+            <p className="text-sm text-[#C0392B] mb-5 bg-[#FDECEA] py-2.5 px-3.5 rounded-md">
+              {error}
+            </p>
           )}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            <div className="flex flex-col gap-1">
-              <input type="email" placeholder="Email" {...register("email")}
-                className="w-full bg-transparent border-b-2 border-green-300 focus:outline-none focus:border-[#1F5E24] transition-all duration-300 py-2"
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div className="flex flex-col gap-2">
+              <label className="text-xs font-bold uppercase tracking-wide text-[#555555]">
+                Email Address
+              </label>
+              <input
+                type="email"
+                placeholder="you@example.com"
+                {...register("email")}
+                className="w-full bg-[#F5F5F5] rounded-md px-4 py-3.5 text-sm text-[#111111] placeholder:text-[#999999] outline-none focus:ring-2 focus:ring-[#C84B11]/40 transition-all"
               />
-              {errors.email && <span className="text-red-500 text-xs">{errors.email.message}</span>}
+              {errors.email && (
+                <span className="text-xs text-[#C0392B]">{errors.email.message}</span>
+              )}
             </div>
 
-            <button type="submit" disabled={isSubmitting || pending}
-              className="w-full bg-[#1F5E24] text-white py-3 rounded-full hover:bg-[#17491c] transition-all duration-300 shadow-md hover:shadow-lg font-semibold disabled:opacity-60 disabled:cursor-not-allowed">
+            <button
+              type="submit"
+              disabled={isSubmitting || pending}
+              className="w-full bg-[#111111] text-white py-4 rounded-md text-sm font-bold uppercase tracking-[0.1em] hover:bg-[#222222] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               {isSubmitting || pending ? "Sending..." : "Send Reset Link"}
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-600 mt-6">
-            Remember your password?{" "}
-            {/*  Use prop instead of router.push */}
-            <button type="button" onClick={onOpenLogin}
-              className="text-[#1F5E24] font-semibold hover:underline">
-              Back to Login
-            </button>
-          </p>
+          <div className="mt-10 text-center">
+            <p className="text-sm text-[#8A8A8A]">
+              Remember your password?{" "}
+              <button
+                type="button"
+                onClick={onOpenLogin}
+                className="text-[#111111] font-bold underline ml-1"
+              >
+                Back to Login
+              </button>
+            </p>
+          </div>
         </>
       )}
     </div>
   );
-} 
+}
