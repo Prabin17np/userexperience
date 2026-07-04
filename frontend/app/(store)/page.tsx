@@ -1,25 +1,25 @@
 import { HeroSection } from "@/components/home/herosection";
-import { ProductCard } from "@/components/product/ProductCard";
+import { TrustFeaturesStrip } from "@/components/home/ TrustFeaturesStrip";
+import { CategoryShowcaseSection } from "@/components/home/ CategoryShowcaseSection";
+import { FeaturedProductsSection } from "@/components/home/FeaturedProductsSection";
+import { PromoBannerSection } from "@/components/home/PromoBannerSection";
+import { FeaturedCollectionSection } from "@/components/home/FeaturedCollectionSection";
+import { NewsletterSection } from "@/components/home/NewsletterSection";
 import { productsApi } from "@/lib/api/products";
 
 export default async function HomePage() {
   const data = await productsApi.getProducts();
-
-  const products = data.products; 
+  const products = data.products;
 
   return (
     <main>
       <HeroSection />
-
-      <section className="max-w-[1280px] mx-auto px-6 py-16">
-        <h2 className="text-xl font-bold mb-6">Featured Products</h2>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.slice(0, 8).map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
-      </section>
+      <TrustFeaturesStrip />
+      <CategoryShowcaseSection />
+      <FeaturedProductsSection products={products} />
+      <PromoBannerSection />
+      <FeaturedCollectionSection />
+      <NewsletterSection />
     </main>
   );
 }
