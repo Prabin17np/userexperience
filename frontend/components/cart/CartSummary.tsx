@@ -36,7 +36,9 @@ export function CartSummary() {
       {/* #subtotal row */}
       <div className="flex justify-between items-center text-[0.92rem] text-[var(--text2)] py-[0.9rem] border-b border-gray-200">
         <span>Subtotal</span>
-        <strong className="text-[var(--text)]">${summary.subtotal.toLocaleString()}</strong>
+        <strong className="text-[var(--text)]">
+  Rs. {summary.subtotal.toLocaleString()}
+</strong>
       </div>
 
       {/* #shipping row: FREE in accent color when zero */}
@@ -45,14 +47,18 @@ export function CartSummary() {
         {summary.shipping === 0 ? (
           <strong className="text-[var(--accent)]">FREE</strong>
         ) : (
-          <strong className="text-[var(--text)]">${summary.shipping.toFixed(2)}</strong>
+          <strong className="text-[var(--text)]">
+  Rs. {summary.shipping.toLocaleString()}
+</strong>
         )}
       </div>
 
       {/* #tax row */}
       <div className="flex justify-between items-center text-[0.92rem] text-[var(--text2)] py-[0.9rem] border-b border-gray-200">
         <span>Tax</span>
-        <strong className="text-[var(--text)]">${summary.tax.toFixed(2)}</strong>
+        <strong className="text-[var(--text)]">
+  Rs. {summary.tax.toLocaleString()}
+</strong>
       </div>
 
       {/* #divider before total */}
@@ -61,7 +67,7 @@ export function CartSummary() {
       {/* #total: larger, bold */}
       <div className="flex justify-between items-baseline text-[1.3rem] font-extrabold text-[var(--text)] py-2 pb-6">
         <span>Total</span>
-        <span>${summary.total.toFixed(2)}</span>
+     <span>Rs. {summary.total.toLocaleString()}</span>
       </div>
 
       {/* #checkout button: black idle → green success, lifts on hover */}

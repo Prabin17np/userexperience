@@ -50,11 +50,11 @@ export function CartItem({ item }: Props) {
           </div>
           <div className="text-right flex-shrink-0">
             <div className="text-lg font-bold text-[var(--text)]">
-              ${(product.price * quantity).toLocaleString()}
+              Rs. {(product.price * quantity).toLocaleString()}
             </div>
             {product.originalPrice && (
               <div className="text-sm line-through text-[var(--text3)]">
-                ${(product.originalPrice * quantity).toLocaleString()}
+               Rs. {(product.originalPrice * quantity).toLocaleString()}
               </div>
             )}
           </div>
