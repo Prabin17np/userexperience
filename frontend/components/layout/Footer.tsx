@@ -31,10 +31,10 @@ export const Footer: React.FC = () => {
           {/* Brand column */}
           <div className="flex flex-col gap-4">
             <span className="text-lg font-black uppercase tracking-tight">Solely</span>
-            <p className="text-sm text-[#aaaaaa] leading-relaxed max-w-[240px]">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-              incididunt ut labore et dolore magna aliqua.
-            </p>
+           <p className="text-sm text-[#aaaaaa] leading-relaxed max-w-[240px]">
+  At Solely, we believe every step matters. Shop premium shoes made with
+  quality craftsmanship and designed to fit your lifestyle.
+</p>
             <div className="flex items-center gap-3 mt-2">
               <a
                 href="#"
