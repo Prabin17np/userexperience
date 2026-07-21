@@ -1,4 +1,4 @@
-// ─── CLIENT-SIDE ONLY ─────────────────────────────────────────────────────────
+//CLIENT-SIDE ONLY
 // This file is safe to import anywhere (client components, axios, zustand).
 // Never import next/headers here.
 
